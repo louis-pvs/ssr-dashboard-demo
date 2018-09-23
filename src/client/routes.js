@@ -1,27 +1,44 @@
 import * as Loadable from "react-loadable";
+
+import App from "./App";
 import PageLoader from "./view/PageLoader";
 import { loadUserData } from "./components/User";
+import { loadAdminData } from "./components/Admin";
+import { loadCurrentUser } from "./App";
 
-const Home = Loadable({
+const LoadableHome = Loadable({
   loader: () => import("./Home"),
-  loading: PageLoader,
-  timeout: 5000
+  loading: PageLoader
 });
 const LoadableUserPage = Loadable({
   loader: () => import("./components/User"),
-  loading: PageLoader,
-  timeout: 5000
+  loading: PageLoader
+});
+const LoadableAdminPage = Loadable({
+  loader: () => import("./components/Admin"),
+  loading: PageLoader
 });
 
 export default [
   {
-    path: "/",
-    component: Home,
-    exact: true
-  },
-  {
-    path: "/users",
-    component: LoadableUserPage,
-    loadData: loadUserData
+    component: App,
+    loadData: loadCurrentUser,
+    routes: [
+      {
+        path: "/",
+        component: LoadableHome,
+        exact: true
+      },
+      {
+        path: "/users",
+        component: LoadableUserPage,
+        loadData: loadUserData
+      },
+      {
+        path: "/admins",
+        component: LoadableAdminPage,
+        loadData: loadAdminData
+      }
+    ]
   }
 ];

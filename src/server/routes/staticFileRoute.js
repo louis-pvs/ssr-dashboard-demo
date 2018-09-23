@@ -5,6 +5,7 @@ import React from "react";
 import { getBundles } from "react-loadable/webpack";
 import { matchRoutes } from "react-router-config";
 import { Provider } from "react-redux";
+import { renderRoutes } from "react-router-config";
 import { renderToString } from "react-dom/server";
 import { ServerStyleSheet, StyleSheetManager } from "styled-components";
 import { StaticRouter } from "react-router-dom";
@@ -38,13 +39,18 @@ export default app => {
        * resolving all the initial api call before rendering React app before sending back to user
        * @return {function} promises - promises from action creator
        */
+      const loadComponentDatas = location => {
+        const branch = matchRoutes(routes, location);
 
-      const componentsLoadData = matchRoutes(routes, req.path).map(
-        ({ route }) => {
-          if (!route.loadData) return null;
-          return route.loadData(stores);
-        }
-      );
+        const promises = branch.map(({ route }) => {
+          // console.log(route);
+          return route.loadData
+            ? route.loadData(stores)
+            : Promise.resolve(null);
+        });
+
+        return Promise.all(promises);
+      };
 
       /** return express response */
       const resolveResponse = () => {
@@ -58,7 +64,7 @@ export default app => {
               <StyleSheetManager sheet={sheet.instance}>
                 <Provider store={stores}>
                   <StaticRouter context={context} location={req.url}>
-                    <App />
+                    {renderRoutes(routes)}
                   </StaticRouter>
                 </Provider>
               </StyleSheetManager>
@@ -70,6 +76,6 @@ export default app => {
         }
       };
 
-      return Promise.all(componentsLoadData).then(resolveResponse);
+      return loadComponentDatas(req.url).then(resolveResponse);
     });
 };

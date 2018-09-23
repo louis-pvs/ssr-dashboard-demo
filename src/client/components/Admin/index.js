@@ -5,10 +5,10 @@ import { Heading } from "evergreen-ui";
 import * as actions from "../../../reducers/actions";
 import UserList from "../../view/UserList";
 
-class UserModule extends React.PureComponent {
+class AdminModule extends React.PureComponent {
   state = { users: [] };
   componentDidMount = () => {
-    this.props.fetchUsers();
+    this.props.fetchAdmins();
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -18,7 +18,7 @@ class UserModule extends React.PureComponent {
   render() {
     return (
       <div>
-        <Heading size={900}>User List</Heading>
+        <Heading size={900}>Admin List</Heading>
         <UserList users={this.state.users} />
       </div>
     );
@@ -26,14 +26,14 @@ class UserModule extends React.PureComponent {
 }
 
 const mapStateToProps = ({ userStore }) => {
-  return { users: userStore.users };
+  return { users: userStore.admins };
 };
 
-export const loadUserData = stores => {
-  return stores.dispatch(actions.fetchUsers());
+export const loadAdminData = stores => {
+  return stores.dispatch(actions.fetchAdmins());
 };
 
 export default connect(
   mapStateToProps,
   actions
-)(UserModule);
+)(AdminModule);

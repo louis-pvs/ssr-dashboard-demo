@@ -1,14 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import { OrderedList, ListItem } from "evergreen-ui";
 
-const StyledList = styled.ul`
-  list-style: none;
-  padding: 0;
-`;
+const StyledList = styled(OrderedList)``;
 
 const UserListItem = function({ name }) {
-  return <li>{name}</li>;
+  return <ListItem>{name}</ListItem>;
 };
 const UserList = ({ users }) => {
   return (
