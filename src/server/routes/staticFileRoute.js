@@ -18,8 +18,6 @@ import routes from "../../client/routes";
 const stats = require("../../../build/react-loadable.json");
 
 const sheet = new ServerStyleSheet();
-const context = {};
-const modules = [];
 
 export default app => {
   app
@@ -54,26 +52,30 @@ export default app => {
 
       /** return express response */
       const resolveResponse = () => {
-        if (context.url) {
-          return res.redirect(context.url);
-        } else {
-          // creating react markup
-          let bundles = getBundles(stats, modules);
-          const reactMarkup = renderToString(
-            <Loadable.Capture report={moduleName => modules.push(moduleName)}>
-              <StyleSheetManager sheet={sheet.instance}>
-                <Provider store={stores}>
-                  <StaticRouter context={context} location={req.url}>
-                    {renderRoutes(routes)}
-                  </StaticRouter>
-                </Provider>
-              </StyleSheetManager>
-            </Loadable.Capture>
-          );
-          return res
-            .status(200)
-            .send(htmlRenderer(reactMarkup, bundles, stores));
-        }
+        const context = {};
+        const modules = [];
+
+        // creating react markup
+        const reactMarkup = renderToString(
+          <Loadable.Capture report={moduleName => modules.push(moduleName)}>
+            <StyleSheetManager sheet={sheet.instance}>
+              <Provider store={stores}>
+                <StaticRouter context={context} location={req.url}>
+                  {renderRoutes(routes)}
+                </StaticRouter>
+              </Provider>
+            </StyleSheetManager>
+          </Loadable.Capture>
+        );
+        let statusCode = 200;
+        const bundles = getBundles(stats, modules);
+        const content = htmlRenderer(reactMarkup, bundles, stores);
+
+        if (context.url) return res.redirect(context.url);
+        if (context.notFound) statusCode = 404;
+
+        console.log(context);
+        return res.status(statusCode).send(content);
       };
 
       return loadComponentDatas(req.url).then(resolveResponse);

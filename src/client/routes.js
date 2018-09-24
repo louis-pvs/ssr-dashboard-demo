@@ -5,6 +5,7 @@ import PageLoader from "./view/PageLoader";
 import { loadUserData } from "./components/User";
 import { loadAdminData } from "./components/Admin";
 import { loadCurrentUser } from "./App";
+import NotFound from "./view/NotFound";
 
 const LoadableHome = Loadable({
   loader: () => import("./Home"),
@@ -23,6 +24,7 @@ export default [
   {
     component: App,
     loadData: loadCurrentUser,
+    path: "/",
     routes: [
       {
         path: "/",
@@ -38,6 +40,9 @@ export default [
         path: "/admins",
         component: LoadableAdminPage,
         loadData: loadAdminData
+      },
+      {
+        component: NotFound
       }
     ]
   }
