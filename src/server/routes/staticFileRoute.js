@@ -39,20 +39,25 @@ export default app => {
        */
       const loadComponentDatas = location => {
         const branch = matchRoutes(routes, location);
-
-        const promises = branch.map(({ route }) => {
-          // console.log(route);
-          return route.loadData
-            ? route.loadData(stores)
-            : Promise.resolve(null);
-        });
+        const resolveLoadDataPromise = ({ route }) => {
+          if (route.loadData) return route.loadData(stores);
+        };
+        const resolveInnerPromise = innerPromise => {
+          if (!innerPromise) return;
+          return new Promise(resolve => {
+            innerPromise.then(resolve).catch(resolve);
+          });
+        };
+        const promises = branch
+          .map(resolveLoadDataPromise)
+          .map(resolveInnerPromise);
 
         return Promise.all(promises);
       };
 
       /** return express response */
       const resolveResponse = () => {
-        const context = {};
+        const context = { status: 200 };
         const modules = [];
 
         // creating react markup
@@ -67,15 +72,15 @@ export default app => {
             </StyleSheetManager>
           </Loadable.Capture>
         );
-        let statusCode = 200;
+
+        const styles = sheet.getStyleTags();
         const bundles = getBundles(stats, modules);
-        const content = htmlRenderer(reactMarkup, bundles, stores);
+        const content = htmlRenderer(reactMarkup, styles, bundles, stores);
 
+        if (context.statusCode) res.status(context.statusCode);
         if (context.url) return res.redirect(context.url);
-        if (context.notFound) statusCode = 404;
 
-        console.log(context);
-        return res.status(statusCode).send(content);
+        return res.send(content);
       };
 
       return loadComponentDatas(req.url).then(resolveResponse);

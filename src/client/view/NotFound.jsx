@@ -12,7 +12,7 @@ const StyledContainer = styled.div`
 `;
 
 const NotFound = ({ staticContext = {} }) => {
-  staticContext.notFound = true;
+  staticContext.statusCode = 404;
   return (
     <StyledContainer>
       <Heading size={900}>Not found</Heading>

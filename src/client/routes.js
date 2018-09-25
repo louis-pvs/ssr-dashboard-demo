@@ -1,11 +1,12 @@
 import * as Loadable from "react-loadable";
 
 import App from "./App";
+import RequireAuth from "./components/HOCs/RequireAuth";
+import NotFound from "./view/NotFound";
 import PageLoader from "./view/PageLoader";
 import { loadUserData } from "./components/User";
 import { loadAdminData } from "./components/Admin";
 import { loadCurrentUser } from "./App";
-import NotFound from "./view/NotFound";
 
 const LoadableHome = Loadable({
   loader: () => import("./Home"),
@@ -38,7 +39,7 @@ export default [
       },
       {
         path: "/admins",
-        component: LoadableAdminPage,
+        component: RequireAuth(LoadableAdminPage),
         loadData: loadAdminData
       },
       {

@@ -23,6 +23,12 @@ const StyledListItem = styled.li`
 
 const StyledLink = styled(Link)`
   margin-right: 16px;
+  display: inline-block;
+`;
+
+const StyledAnchor = styled.a`
+  ${StyledLink} {
+  }
 `;
 
 const AuthButton = connect(mapStateToProps)(function AuthenticateButton({
@@ -30,14 +36,14 @@ const AuthButton = connect(mapStateToProps)(function AuthenticateButton({
 }) {
   if (authenticated)
     return (
-      <a href="/api/logout">
+      <StyledAnchor href="/api/logout">
         <Button>Log Out</Button>
-      </a>
+      </StyledAnchor>
     );
   return (
-    <a href="/api/auth/google">
+    <StyledAnchor href="/api/auth/google">
       <Button>Log In</Button>
-    </a>
+    </StyledAnchor>
   );
 });
 
