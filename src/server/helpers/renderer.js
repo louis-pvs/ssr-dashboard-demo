@@ -1,4 +1,5 @@
 import serialize from "serialize-javascript";
+import { Helmet } from "react-helmet";
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
@@ -10,13 +11,16 @@ const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
  * @return {string} HTML - final html markup
  */
 const renderer = (markup = "", styles = "", bundles = [], stores) => {
+  const helmet = Helmet.renderStatic();
+
   return `
     <!doctype html>
     <html lang="">
       <head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta charset="utf-8" />
-        <title>Welcome to Razzle</title>
+        ${helmet.title.toString()}
+        ${helmet.meta.toString()}
         <meta name="viewport" content="width=device-width, initial-scale=1">
         ${
           assets.client.css

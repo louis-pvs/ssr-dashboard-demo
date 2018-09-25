@@ -10,7 +10,6 @@ import { renderToString } from "react-dom/server";
 import { ServerStyleSheet, StyleSheetManager } from "styled-components";
 import { StaticRouter } from "react-router-dom";
 
-import App from "../../client/App";
 import createStores, { rootReducer } from "../../reducers";
 import htmlRenderer from "../helpers/renderer";
 import routes from "../../client/routes";
@@ -57,7 +56,7 @@ export default app => {
 
       /** return express response */
       const resolveResponse = () => {
-        const context = { status: 200 };
+        const context = { status: 200, siteName: "SSR Dashboard - %s" };
         const modules = [];
 
         // creating react markup
